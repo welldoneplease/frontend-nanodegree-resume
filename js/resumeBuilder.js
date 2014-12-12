@@ -160,3 +160,8 @@ projects.display();
 
 // add map to resume
 $("#mapDiv").append(googleMap);
+
+// logClick eventHandler
+$(document).on('click', function(loc) {
+  logClicks(loc.pageX, loc.pageY);
+})
