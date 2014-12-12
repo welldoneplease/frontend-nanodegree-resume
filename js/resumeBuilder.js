@@ -1,18 +1,52 @@
+// helperFunctions
+function dataRpl(tpl, data) {
+  var formattedTemplate = tpl.replace('%data%', data);
+  return formattedTemplate;
+}
+
 var bio = {
   "name": "Robert A. Stevens",
   "role": "Web Developer",
   "contacts": {
     "mobile": "423-488-3257",
     "email": "RobertAStevens@teleworm.us",
-    "github": "myfakegithub",
+    "github": "welldoneplease",
     "twitter": "@ewwtwitter",
+    "blog": "http://www.myfakeblog.fake",
     "location": "San Andreas"
   },
   "welcomeMessage": "01001000 01100101 01101100 01101100 01101111 00100000 01010111 01101111 01110010 01101100 01100100",
   "skills": [
-    "spielen", "schielen", "rennen", "pennen"
+    "travel without moving", "mingle with gods", "collect infinity gems", "spelunking"
   ],
-  "bioPic": "images/fry.jpg"
+  "bioPic": "images/fry.jpg",
+};
+
+bio.display = function() {
+  // add role and name
+  $("#header").prepend(dataRpl(HTMLheaderRole, this.role))
+    .prepend(dataRpl(HTMLheaderName, this.name));
+
+  // add contact info to top and footer section
+  $("#topContacts, #footerContacts").append(dataRpl(HTMLmobile, this.contacts.mobile))
+    .append(dataRpl(HTMLemail, this.contacts.email))
+    .append(dataRpl(HTMLtwitter, this.contacts.twitter))
+    .append(dataRpl(HTMLgithub, this.contacts.github))
+    .append(dataRpl(HTMLblog, this.contacts.blog))
+    .append(dataRpl(HTMLlocation, this.contacts.location));
+
+  // add bio pic and welcome message
+  $("#header").append(dataRpl(HTMLbioPic, this.bioPic))
+    .append(dataRpl(HTMLWelcomeMsg, this.welcomeMessage));
+
+  // do we have skills? if so add 'skillsStarter' and loop through skills
+  if(this.skills.length > 0) {
+    $("#header").append(HTMLskillsStart);
+    var skillsElement = $("#skillsH3");
+    for(var skill in this.skills) {
+      skillsElement.append(dataRpl(HTMLskills, this.skills[skill]));
+    }
+  }
 };
 
 
@@ -37,6 +71,34 @@ var education = {
   ]
 };
 
+education.display = function() {
+  $("#education").append(HTMLschoolStart);
+
+  for (var school in this.schools) {
+    $(".education-entry:last").append(
+      dataRpl(HTMLschoolName, this.schools[school].name)
+      +dataRpl(HTMLschoolDegree, this.schools[school].degree)
+    )
+      .append(dataRpl(HTMLschoolDates, this.schools[school].dates))
+      .append(dataRpl(HTMLschoolLocation, this.schools[school].location))
+      .append(dataRpl(HTMLschoolMajor, this.schools[school].majors[0]));
+  }
+
+  if (this.onlineCourses.length > 0) {
+    for (var course in this.onlineCourses) {
+      $("#education").append(HTMLonlineClasses)
+        .append(HTMLschoolStart);
+
+      $(".education-entry:last").append(dataRpl(HTMLonlineTitle, this.onlineCourses[course].title)
+        +dataRpl(HTMLonlineSchool, this.onlineCourses[course].school)
+      )
+        .append(dataRpl(HTMLonlineDates, this.onlineCourses[course].dates))
+        .append(dataRpl(HTMLonlineURL, this.onlineCourses[course].url));
+    }
+  }
+};
+
+
 var work = {
   "jobs": [
     {
@@ -49,57 +111,52 @@ var work = {
   ]
 };
 
+work.display = function() {
+  $("#workExperience").append(HTMLworkStart);
+
+  for(var job in this.jobs) {
+    $(".work-entry:last").append(dataRpl(HTMLworkEmployer, this.jobs[job].employer)
+      + dataRpl(HTMLworkTitle, this.jobs[job].title))
+      .append(dataRpl(HTMLworkDates, this.jobs[job].dates))
+      .append(dataRpl(HTMLworkDescription, this.jobs[job].description));
+  }
+}
+
+
 var projects = {
   "projects": [
     {
      "title": "Fake Project 1",
      "dates": 2014,
      "description": "Now that there is the Tec-9, a crappy spray gun from South Miami. This gun is advertised as the most popular gun in American crime. Do you believe that shit? It actually says that in the little book that comes with it: the most popular gun in American crime. Like they're actually proud of that shit.",
-     "images": ["http://upload.wikimedia.org/wikipedia/en/5/54/Ghazir_Rug.jpg"]
+     "images": ["http://placehold.it/350x250", "http://placehold.it/350x250", "http://placehold.it/350x250"]
     }
   ]
 }
 
-if (bio.skills.length > 0 ) {
-  $("#header").prepend(HTMLheaderRole.replace("%data%", bio.role));
-  $("#header").prepend(HTMLheaderName.replace("%data%", bio.name));
-  $("#topContacts").append(HTMLmobile.replace("%data%", bio.contacts.mobile));
-  $("#topContacts").append(HTMLemail.replace("%data%", bio.contacts.email));
-  $("#topContacts").append(HTMLtwitter.replace("%data%", bio.contacts.twitter));
-  $("#topContacts").append(HTMLgithub.replace("%data%", bio.contacts.github));
-  $("#topContacts").append(HTMLlocation.replace("%data%", bio.contacts.location));
-  $("#header").append(HTMLbioPic.replace("%data%", bio.bioPic))
-  $("#header").append(HTMLskillsStart);
-  $("#skills").append(HTMLskills.replace("%data%", bio.skills[0]));
-  $("#skills").append(HTMLskills.replace("%data%", bio.skills[1]));
-  $("#skills").append(HTMLskills.replace("%data%", bio.skills[2]));
-}
-
-function displayWork() {
-  $("#workExperience").append(HTMLworkStart);
-  for(var job in work.jobs) {
-    $(".work-entry:last").append(HTMLworkEmployer.replace("%data%", work.jobs[job].employer) + HTMLworkTitle.replace("%data%", work.jobs[job].title));
-    $(".work-entry:last").append(HTMLworkDates.replace("%data%", work.jobs[job].dates));
-    $(".work-entry:last").append(HTMLworkDescription.replace("%data%", work.jobs[job].description));
-  }
-}
-
-displayWork();
-
 projects.display = function() {
   $("#projects").append(HTMLprojectStart);
+
   for (var project in this.projects) {
-    $(".project-entry:last").append(HTMLprojectTitle.replace("%data%", this.projects[project].title))
-    $(".project-entry:last").append(HTMLprojectDates.replace("%data%", this.projects[project].dates))
-    $(".project-entry:last").append(HTMLprojectDescription.replace("%data%", this.projects[project].description))
-    if (this.projects[project].images > 0) {
+    $(".project-entry:last").append(dataRpl(HTMLprojectTitle, this.projects[project].title))
+      .append(dataRpl(HTMLprojectDates, this.projects[project].dates))
+      .append(dataRpl(HTMLprojectDescription, this.projects[project].description))
+
+    if (this.projects[project].images.length > 0) {
+      var lastProjectEntry = $(".project-entry:last");
       for (var img in this.projects[project].images) {
-        $(".project-entry:last").append(HTMLprojectImage.replace("%data%", this.projects[project].images[img]))
+        lastProjectEntry.append(dataRpl(HTMLprojectImage, this.projects[project].images[img]));
       }
     }
   }
 };
 
+
+// call all display functions
+bio.display();
+education.display();
+work.display();
 projects.display();
 
+// add map to resume
 $("#mapDiv").append(googleMap);
